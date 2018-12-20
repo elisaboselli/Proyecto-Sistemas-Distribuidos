@@ -1,0 +1,59 @@
+package udp;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+import messages.Message;
+
+public class UDPClient {
+
+	public static void main(String args[]) {
+
+		try {
+			DatagramSocket socketUDP = new DatagramSocket();
+			InetAddress hostServer = InetAddress.getByName(args[0]);
+			int portServer = 6789;
+
+			Message msg = new Message("get", "1", "holis");
+
+			// System.out.println(msg);
+			// System.out.println("Length: " + msg.toString().length());
+
+			DatagramPacket request = new DatagramPacket(msg.toString().getBytes(), msg.toString().length(), hostServer,
+					portServer);
+
+			socketUDP.send(request);
+
+			byte[] buffer = new byte[1000];
+			DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+			socketUDP.receive(response);
+
+			// System.out.println("response: " + new
+			// String(response.getData()));
+
+			byte[] data = new byte[response.getLength()];
+			System.arraycopy(response.getData(), response.getOffset(), data, 0, response.getLength());
+			// String responseMsg = new String(data);
+
+			// JSONParser parser = new JSONParser();
+			// JSONObject jsonMsg = (JSONObject) parser.parse(responseMsg);
+
+			// System.out.println("Response: " + new
+			// String(response.getData()));
+			// System.out.println("Response: " + jsonMsg);
+
+			socketUDP.close();
+
+		} catch (SocketException e) {
+			System.out.println("Socket: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("IO: " + e.getMessage());
+		} /*
+			 * catch (ParseException e) { System.out.println("PE: " +
+			 * e.getMessage()); }
+			 */
+	}
+}
