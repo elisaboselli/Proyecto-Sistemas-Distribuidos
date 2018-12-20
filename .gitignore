@@ -57,6 +57,8 @@ pascaltds
 
 # generated files
 bin/
+.metadata
+.recommenders
 */.metadata
 */.recommenders
 *evosuite-report
