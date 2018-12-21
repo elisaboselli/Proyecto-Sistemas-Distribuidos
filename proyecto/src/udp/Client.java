@@ -6,10 +6,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import messages.Message;
-import messages.MessageType;
+import messages.ClientMessage;
+import messages.ClientMessageType;
+import messages.Element;
+import utils.JSONUtils;
 
-public class UDPClient {
+public class Client {
 
 	public static void main(String args[]) {
 
@@ -18,7 +20,10 @@ public class UDPClient {
 			InetAddress hostServer = InetAddress.getByName(args[0]);
 			int portServer = 6789;
 
-			Message msg = new Message(MessageType.GET, "1", "holis");
+			JSONUtils jsonUtils = new JSONUtils();
+
+			Element elem = new Element(1, 1, 0);
+			ClientMessage msg = new ClientMessage(ClientMessageType.GET, elem);
 
 			DatagramPacket request = new DatagramPacket(msg.toJSON().getBytes(), msg.toJSON().length(), hostServer,
 					portServer);
@@ -29,10 +34,7 @@ public class UDPClient {
 			DatagramPacket response = new DatagramPacket(buffer, buffer.length);
 			socketUDP.receive(response);
 
-			byte[] data = new byte[response.getLength()];
-			System.arraycopy(response.getData(), response.getOffset(), data, 0, response.getLength());
-			String dataStr = new String(data);
-			Message responseMsg = Message.fromJSON(dataStr);
+			ClientMessage responseMsg = jsonUtils.getClientMessage(response);
 
 			System.out.println("Response: " + responseMsg.toString());
 
