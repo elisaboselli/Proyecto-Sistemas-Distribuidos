@@ -1,6 +1,10 @@
 package messages;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Element {
 
@@ -51,6 +55,23 @@ public class Element {
 	public static Element fromJSON(String jsonStr) {
 		Gson gson = new Gson();
 		return gson.fromJson(jsonStr, Element.class);
+	}
+
+	public static List<Element> fromJSONArray(String jsonStr) {
+		Gson gson = new Gson();
+		Type type = new TypeToken<List<Element>>() {
+		}.getType();
+		return gson.fromJson(jsonStr, type);
+	}
+
+	public Element findElementById(List<Element> elements) {
+		int elementId = this.id;
+		for (Element element : elements) {
+			if (element.getId() == elementId) {
+				return element;
+			}
+		}
+		return null;
 	}
 
 }
